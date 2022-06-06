@@ -7,30 +7,22 @@ function generator(opts) {
 }
 
 function nanoidPlugin(schema, opts) {
-	if (schema.options._id !== undefined && schema.options._id === false) return;
-
-	if (typeof opts == 'number') {
-		opts = { length: opts }
-	}
 
 	opts.length = opts.length || DEFAULT_LENGTH;
+	const filed = opts.field || '_id';
 
-	let _id = '_id';
-	const dataObj = {};
+	schema.add({
+		[filed]: {
+			type: String,
+			default: '',
+		},
+	});
 
-	dataObj[_id] = {
-		type: String,
-		default: function () {
-			return generator(opts)(opts.length);
-		}
-	};
-
-	schema.add(dataObj);
 	schema.pre('save', function (next) {
 		if (this.isNew && !this.constructor.$isArraySubdocument) {
 			attemptToGenerate(this, opts)
 				.then(function (newId) {
-					this[_id] = newId;
+					this[opts.field] = newId;
 					next()
 				})
 				.catch(next)

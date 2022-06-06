@@ -3,6 +3,7 @@ declare module 'mongoose-nanoid'
 import { Schema } from 'mongoose'
 
 interface Options {
+    field?: String;
     length?: number;
     alphabets?: boolean;
 }
